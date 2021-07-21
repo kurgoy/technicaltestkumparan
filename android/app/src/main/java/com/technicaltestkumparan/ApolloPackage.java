@@ -1,6 +1,5 @@
 package com.technicaltestkumparan;
 
-
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.JavaScriptModule;
 import com.facebook.react.bridge.NativeModule;
@@ -12,15 +11,12 @@ import java.util.List;
 
 public class ApolloPackage implements ReactPackage {
 
-
   public ApolloPackage() {
   }
 
   @Override
   public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
-    return Arrays.<NativeModule>asList(
-        new ApolloModule(reactContext)
-    );
+    return Arrays.<NativeModule>asList(new ApolloModule(reactContext));
   }
 
   public List<Class<? extends JavaScriptModule>> createJSModules() {

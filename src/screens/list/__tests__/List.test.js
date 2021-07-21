@@ -5,7 +5,22 @@ import useQuery from '../useQuery';
 
 jest.mock('../useQuery', () => jest.fn());
 
-test('activityindicator loading show when status = loading', () => {
+const launches = [
+  {
+    id: '89',
+    site: 'CCAFS SLC 40',
+    rocket: {
+      name: 'Falcon 9',
+      type: 'FT',
+    },
+    mission: {
+      name: 'Starlink 3',
+      missionPatch: 'https://images2.imgbox.com/d2/3b/bQaWiil0_o.png',
+    },
+  },
+];
+
+test('show indicator loading', () => {
   useQuery.mockImplementation(() => ({
     status: 'loading',
     data: {
@@ -15,10 +30,10 @@ test('activityindicator loading show when status = loading', () => {
 
   const {getByTestId} = render(<List />);
 
-  expect(getByTestId('loading')).toBeTruthy();
+  expect(getByTestId('Loading')).toBeTruthy();
 });
 
-test('activityindicator more show when status = more', () => {
+test('show indicator more', () => {
   useQuery.mockImplementation(() => ({
     status: 'more',
     data: {
@@ -28,7 +43,18 @@ test('activityindicator more show when status = more', () => {
 
   const {getByTestId} = render(<List />);
 
-  expect(getByTestId('more')).toBeTruthy();
+  expect(getByTestId('More')).toBeTruthy();
+});
+
+test('show error message', () => {
+  useQuery.mockImplementation(() => ({
+    status: 'error',
+    data: {
+      launches: [],
+    },
+  }));
+  const {getByTestId} = render(<List />);
+  expect(getByTestId('Error')).toBeTruthy();
 });
 
 test('call onLoadMore', () => {
@@ -37,20 +63,7 @@ test('call onLoadMore', () => {
     status: '',
     onLoadMore: onLoadMore,
     data: {
-      launches: [
-        {
-          id: '89',
-          site: 'CCAFS SLC 40',
-          rocket: {
-            name: 'Falcon 9',
-            type: 'FT',
-          },
-          mission: {
-            name: 'Starlink 3',
-            missionPatch: 'https://images2.imgbox.com/d2/3b/bQaWiil0_o.png',
-          },
-        },
-      ],
+      launches: launches,
     },
   }));
 
@@ -77,20 +90,7 @@ test('call onLoadMore', () => {
 
 test('check item mapping is correct', () => {
   const onLoadMore = jest.fn();
-  const launches = [
-    {
-      id: '89',
-      site: 'CCAFS SLC 40',
-      rocket: {
-        name: 'Falcon 9',
-        type: 'FT',
-      },
-      mission: {
-        name: 'Starlink 3',
-        missionPatch: 'https://images2.imgbox.com/d2/3b/bQaWiil0_o.png',
-      },
-    },
-  ];
+
   useQuery.mockImplementation(() => ({
     status: '',
     onLoadMore: onLoadMore,

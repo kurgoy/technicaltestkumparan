@@ -4,11 +4,51 @@
 import Apollo
 import Foundation
 
+public enum PatchSize: RawRepresentable, Equatable, Hashable, CaseIterable, Apollo.JSONDecodable, Apollo.JSONEncodable {
+  public typealias RawValue = String
+  case small
+  case large
+  /// Auto generated constant for unknown enum values
+  case __unknown(RawValue)
+
+  public init?(rawValue: RawValue) {
+    switch rawValue {
+      case "SMALL": self = .small
+      case "LARGE": self = .large
+      default: self = .__unknown(rawValue)
+    }
+  }
+
+  public var rawValue: RawValue {
+    switch self {
+      case .small: return "SMALL"
+      case .large: return "LARGE"
+      case .__unknown(let value): return value
+    }
+  }
+
+  public static func == (lhs: PatchSize, rhs: PatchSize) -> Bool {
+    switch (lhs, rhs) {
+      case (.small, .small): return true
+      case (.large, .large): return true
+      case (.__unknown(let lhsValue), .__unknown(let rhsValue)): return lhsValue == rhsValue
+      default: return false
+    }
+  }
+
+  public static var allCases: [PatchSize] {
+    return [
+      .small,
+      .large,
+    ]
+  }
+}
+
 public final class LaunchListQuery: GraphQLQuery {
   /// The raw GraphQL definition of this operation.
   public let operationDefinition: String =
     """
-    query LaunchList($pageSize: Int, $cursor: String) {
+    query LaunchList($pageSize: Int, $cursor: String, $patchSize: PatchSize) {
       launches(pageSize: $pageSize, after: $cursor) {
         __typename
         cursor
@@ -25,7 +65,7 @@ public final class LaunchListQuery: GraphQLQuery {
           mission {
             __typename
             name
-            missionPatch
+            missionPatch(size: $patchSize)
           }
         }
       }
@@ -36,14 +76,16 @@ public final class LaunchListQuery: GraphQLQuery {
 
   public var pageSize: Int?
   public var cursor: String?
+  public var patchSize: PatchSize?
 
-  public init(pageSize: Int? = nil, cursor: String? = nil) {
+  public init(pageSize: Int? = nil, cursor: String? = nil, patchSize: PatchSize? = nil) {
     self.pageSize = pageSize
     self.cursor = cursor
+    self.patchSize = patchSize
   }
 
   public var variables: GraphQLMap? {
-    return ["pageSize": pageSize, "cursor": cursor]
+    return ["pageSize": pageSize, "cursor": cursor, "patchSize": patchSize]
   }
 
   public struct Data: GraphQLSelectionSet {
@@ -256,7 +298,7 @@ public final class LaunchListQuery: GraphQLQuery {
             return [
               GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
               GraphQLField("name", type: .scalar(String.self)),
-              GraphQLField("missionPatch", type: .scalar(String.self)),
+              GraphQLField("missionPatch", arguments: ["size": GraphQLVariable("patchSize")], type: .scalar(String.self)),
             ]
           }
 

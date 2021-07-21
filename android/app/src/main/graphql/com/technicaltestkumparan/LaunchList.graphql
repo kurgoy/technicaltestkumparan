@@ -1,4 +1,4 @@
-query LaunchList($pageSize: Int, $cursor: String) {
+query LaunchList($pageSize: Int, $cursor: String,$patchSize: PatchSize) {
   launches(pageSize: $pageSize, after: $cursor) {
     cursor
     hasMore
@@ -11,7 +11,7 @@ query LaunchList($pageSize: Int, $cursor: String) {
       }
       mission {
       name
-      missionPatch
+      missionPatch(size: $patchSize)
       }
     }
   }

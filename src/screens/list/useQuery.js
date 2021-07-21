@@ -1,5 +1,4 @@
-import React, {useState, useEffect} from 'react';
-import {FlatList, ActivityIndicator, Image, View, Text} from 'react-native';
+import {useState, useEffect} from 'react';
 import ApolloGraphql from '../../modules/ApolloGraphql';
 
 export default function useQuery() {
@@ -38,6 +37,7 @@ export default function useQuery() {
     ApolloGraphql.query(
       pageSize,
       query.data.cursor,
+      'SMALL',
       newData => {
         setQuery(prevQuery => ({
           status: 'success',
